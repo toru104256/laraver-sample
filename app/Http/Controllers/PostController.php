@@ -37,7 +37,8 @@
          */
         public function show(string $id)
         {
-            //
+            $posts = Post::with('comments')->findOrFail($id);
+            return view('posts.show', compact('posts'));
         }
 
         /**
