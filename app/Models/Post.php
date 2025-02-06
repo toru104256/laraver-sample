@@ -2,21 +2,24 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Post extends Model
 {
-	public function comments()
-	{
-		return $this->hasMany(Comment::class)->latest();
-	}
-	protected $fillable = [
-		'name',
-		'contents',
-		'user_id'
-	];
-	public function user()
-	{
-		return $this->belongsTo(User::class);
-	}
+    use HasFactory;
+
+    protected $fillable = ['name', 'content','user_id'];
+
+
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class);
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
 }
