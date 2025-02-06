@@ -1,67 +1,42 @@
 <?php
 
-    namespace App\Http\Controllers;
+namespace App\Http\Controllers;
 
-    use App\Models\Post;
-    use Illuminate\Http\Request;
+use App\Models\Post;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
-    class PostController extends Controller
+class PostController extends Controller
+{
+    public function index()
     {
-        /**
-         * Display a listing of the resource.
-         */
-        public function index()
-        {
-            $posts = Post::all();
-            return view('posts.index', compact('posts'));
-        }
+        $posts = Post::all();
 
-        /**
-         * Show the form for creating a new resource.
-         */
-        public function create()
-        {
-            //
-        }
-
-        /**
-         * Store a newly created resource in storage.
-         */
-        public function store(Request $request)
-        {
-            //
-        }
-
-        /**
-         * Display the specified resource.
-         */
-        public function show(string $id)
-        {
-            $posts = Post::with('comments')->findOrFail($id);
-            return view('posts.show', compact('posts'));
-        }
-
-        /**
-         * Show the form for editing the specified resource.
-         */
-        public function edit(string $id)
-        {
-            //
-        }
-
-        /**
-         * Update the specified resource in storage.
-         */
-        public function update(Request $request, string $id)
-        {
-            //
-        }
-
-        /**
-         * Remove the specified resource from storage.
-         */
-        public function destroy(string $id)
-        {
-            //
-        }
+        return view('posts.index', compact('posts'));
     }
+
+    public function show($id)
+    {
+        $post = Post::with('comments')->find($id);
+
+        return view('posts.show', compact('post'));
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|max:20',
+            'content' => 'required|max:255',
+        ]);
+
+        Post::create([
+            'user_id' => Auth::id(),
+            'name' => $request->name,
+            'content' => $request->content,
+        ]);
+      
+        return redirect()->route('posts.index')->with('success', '投稿を作成しました！');
+        
+    }
+
+}
